@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>Thanh toán online</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      --glass-bg: rgba(255, 255, 255, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.9);
+      --glass-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.05);
+      --text-main: #0f172a; 
+      --text-muted: #64748b; 
+      --accent-blue: #0284c7; 
+      --accent-green: #059669; 
+      --accent-red: #dc2626;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
+
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-gradient); display: flex; justify-content: center; color: var(--text-main); position: relative; }
+    
+    body::before, body::after { content: ''; position: absolute; border-radius: 50%; filter: blur(70px); z-index: 0; opacity: 0.5; pointer-events: none; }
+    body::before { width: 300px; height: 300px; background: rgba(56, 189, 248, 0.3); top: -80px; left: -80px; }
+    body::after { width: 250px; height: 250px; background: rgba(52, 211, 153, 0.25); bottom: -40px; right: -40px; }
+
+    .app-container { width: 100%; max-width: 400px; height: 100vh; height: 100dvh; position: relative; z-index: 1; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+    
+    .screen { display: none; flex-direction: column; flex-grow: 1; padding: clamp(12px, 4vw, 20px); animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    .screen.active { display: flex; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+    .header-title { font-size: 14px; font-weight: 800; text-align: center; margin-bottom: 12px; margin-top: 4px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+    
+    .card { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 14px; margin-bottom: 12px; box-shadow: var(--glass-shadow); }
+    
+    .qr-box { text-align: center; background: #ffffff; padding: 10px; border-radius: 16px; margin: 0 auto 12px; display: inline-block; width: fit-content; box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+    .qr-box img { width: clamp(130px, 40vw, 160px); height: auto; aspect-ratio: 1/1; border-radius: 10px; display: block; }
+    
+    /* Nút lưu mã QR thon gọn */
+    .btn-save-qr { background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); color: #fff; border: none; border-radius: 20px; padding: 8px 18px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; font-family: inherit; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25); margin-bottom: 12px; }
+    .btn-save-qr:active { transform: scale(0.95); background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); }
+
+    /* Các dòng thông tin thu gọn */
+    .copy-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(0, 0, 0, 0.02); border: 1px solid rgba(0, 0, 0, 0.03); border-radius: 10px; margin-bottom: 6px; transition: all 0.2s; }
+    .copy-item:active { background: rgba(0, 0, 0, 0.05); }
+    .copy-item:last-child { margin-bottom: 0; }
+    
+    .copy-info { display: flex; flex-direction: column; overflow: hidden; padding-right: 10px; width: 100%; }
+    .copy-lbl { font-size: 9px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 2px; letter-spacing: 0.5px; }
+    .copy-val { font-size: 13px; font-weight: 700; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .copy-val.highlight { color: var(--accent-blue); font-size: 14px; font-weight: 800; }
+    
+    .btn-copy { background: rgba(2, 132, 199, 0.1); color: var(--accent-blue); border-radius: 6px; padding: 5px 10px; font-size: 11px; font-weight: 700; cursor: pointer; flex-shrink: 0; }
+    .btn-copy:active { transform: scale(0.92); }
+
+    /* Khối Lưu ý thu gọn */
+    .note-box { background: rgba(147, 51, 234, 0.05); border: 1px dashed rgba(147, 51, 234, 0.3); border-radius: 14px; padding: 12px; margin-top: 12px; text-align: left; }
+    .note-title { font-size: 13px; font-weight: 800; color: #9333ea; display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+    .note-list { list-style: none; padding: 0; margin: 0; font-size: 11px; color: #475569; line-height: 1.5; }
+    .note-list li { margin-bottom: 6px; display: flex; align-items: flex-start; gap: 6px; }
+    .note-list li:last-child { margin-bottom: 0; }
+    .note-list li span { font-weight: 800; color: #9333ea; }
+
+    .success-icon { width: 64px; height: 64px; background: rgba(16, 185, 129, 0.1); color: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; border: 2px solid rgba(16, 185, 129, 0.3); box-shadow: 0 0 20px rgba(16, 185, 129, 0.15); }
+    
+    .row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 13px; }
+    .row:last-child { margin-bottom: 0; }
+    .row .label { color: var(--text-muted); font-weight: 600; }
+    .row .value { font-weight: 800; color: var(--text-main); }
+    
+    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); color: #fff; padding: 10px 20px; border-radius: 30px; font-size: 12px; font-weight: 600; opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 100; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+    .toast.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+
+    .spinner { border: 3px solid rgba(0, 0, 0, 0.1); width: 32px; height: 32px; border-radius: 50%; border-left-color: var(--accent-blue); animation: spin 1s linear infinite; margin-bottom: 16px; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="toast" id="toast">Đã sao chép!</div>
+
+  <div class="app-container">
+    <div id="screen-loading" class="screen active" style="justify-content: center; align-items: center; height: 100%;">
+      <div class="spinner"></div>
+      <p style="color: var(--text-muted); font-size: 13px; font-weight: 600; letter-spacing: 0.5px;">Đang tải thông tin...</p>
+    </div>
+
+    <div id="screen-error" class="screen" style="justify-content: center; align-items: center; height: 100%;">
+      <div style="font-size: 42px; margin-bottom: 16px; filter: drop-shadow(0 0 10px rgba(220,38,38,0.2));">⚠️</div>
+      <h2 style="margin:0 0 8px; font-size: 20px;">Thông báo</h2>
+      <p id="error-msg" style="color: var(--accent-red); font-size: 13px; text-align: center; line-height: 1.6;">Liên kết không hợp lệ.</p>
+    </div>
+
+    <div id="screen-bill" class="screen">
+      
+      <!-- GIAO DIỆN CHƯA THANH TOÁN -->
+      <div id="bill-unpaid" style="display: flex; flex-direction: column; min-height: 100%;">
+        <div class="header-title" id="app-title-bill">ID: ---</div>
+        
+        <div class="card" style="margin-bottom: 0;">
+          <div style="text-align: center;">
+            <div class="qr-box">
+              <img id="qr-img" src="" alt="Mã QR" crossorigin="anonymous">
+            </div>
+            <!-- Nút Lưu QR thiết kế dạng Pill ôm gọn -->
+            <div>
+              <button class="btn-save-qr" onclick="downloadQR()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Lưu mã QR
+              </button>
+            </div>
+          </div>
+          
+          <div class="copy-item">
+            <div class="copy-info">
+              <span class="copy-lbl">Ngân hàng</span>
+              <span class="copy-val" id="cp-bank">VIETCOMBANK</span>
+            </div>
+            <div class="btn-copy" onclick="copyText('cp-bank')">Copy</div>
+          </div>
+          <div class="copy-item">
+            <div class="copy-info">
+              <span class="copy-lbl">Số tài khoản</span>
+              <span class="copy-val" id="cp-acc">TGE60603130946VCB</span>
+            </div>
+            <div class="btn-copy" onclick="copyText('cp-acc')">Copy</div>
+          </div>
+          <div class="copy-item">
+            <div class="copy-info">
+              <span class="copy-lbl">Chủ tài khoản</span>
+              <span class="copy-val" id="cp-name">DINH VIET TRUONG</span>
+            </div>
+            <div class="btn-copy" onclick="copyText('cp-name')">Copy</div>
+          </div>
+          <div class="copy-item">
+            <div class="copy-info">
+              <span class="copy-lbl">Số tiền chính xác</span>
+              <span class="copy-val highlight" id="cp-amount">0 VNĐ</span>
+            </div>
+            <div class="btn-copy" onclick="copyText('cp-amount')">Copy</div>
+          </div>
+          <div class="copy-item" style="margin-bottom: 0;">
+            <div class="copy-info">
+              <span class="copy-lbl">Nội dung (Bắt buộc)</span>
+              <span class="copy-val" id="cp-content">---</span>
+            </div>
+            <div class="btn-copy" onclick="copyText('cp-content')">Copy</div>
+          </div>
+        </div>
+        
+        <div class="note-box">
+          <div class="note-title">📋 Lưu ý</div>
+          <ul class="note-list">
+            <li><span>1.</span> Vui lòng nhập chính xác nội dung và số tiền yêu cầu. Thông tin sai sẽ không thể tự động lên điểm.</li>
+            <li><span>2.</span> Nếu không thể quét QR Code, vui lòng sao chép thông tin thanh toán.</li>
+            <li><span>3.</span> Vui lòng không làm mới trình duyệt khi đang chuyển khoản.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- GIAO DIỆN ĐÃ THANH TOÁN THÀNH CÔNG -->
+      <div id="bill-paid" style="display: none; flex-direction: column; justify-content: center; height: 100%; text-align: center;">
+        <div class="success-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <h2 style="margin: 0 0 24px; color: var(--accent-green); font-size: 22px;">Thanh toán thành công</h2>
+        
+        <div class="card" style="margin: 0; text-align: left;">
+          <div class="row"><span class="label">Mã giao dịch</span><span class="value" id="bl-paid-id" style="font-family: monospace;">---</span></div>
+          <div class="row"><span class="label">Hoàn tất lúc</span><span class="value" id="bl-paid-time" style="color: var(--accent-green);">--:--</span></div>
+          <div class="row" style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--glass-border);">
+            <span class="label">Số tiền đã nhận</span><span class="value blue" id="bl-paid-amount" style="font-size: 18px;">0 VNĐ</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // URL API GOOGLE SCRIPT
+    const GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbxGNzPtSc-oZjO-yq3GrqaXrvW1nnqJ-6yOGfD-Jv4ZzxorQQfHFGa9LvtOPg2CmHqv2w/exec";
+    
+    // THÔNG TIN NGÂN HÀNG CỐ ĐỊNH
+    const BANK_ID = 'vietcombank';
+    const ACCOUNT_NO = 'TGE60603130946VCB';       
+    const ACCOUNT_NAME = 'DINH VIET TRUONG';      
+
+    let currentId = "";
+    let currentData = null; 
+    let pollingInterval;
+
+    window.onload = function() {
+      document.title = "Thanh toán online";
+      const urlParams = new URLSearchParams(window.location.search);
+      currentId = urlParams.get('id');
+      
+      if (!currentId) {
+        document.getElementById('error-msg').innerText = "Thiếu mã giao dịch. Vui lòng truy cập bằng đường link hợp lệ.";
+        switchScreen('error');
+        return;
+      }
+      fetchData();
+    };
+
+    function fetchData() {
+      fetch(GOOGLE_API_URL + "?id=" + currentId)
+        .then(res => res.json())
+        .then(result => {
+          if (result.success) {
+            renderData(result.data);
+            switchScreen('bill');
+          } else {
+            document.getElementById('error-msg').innerText = result.message;
+            switchScreen('error');
+          }
+        })
+        .catch(err => {
+          document.getElementById('error-msg').innerText = "Lỗi kết nối máy chủ dữ liệu. Vui lòng thử lại.";
+          switchScreen('error');
+        });
+    }
+
+    function switchScreen(screenName) {
+      document.getElementById('screen-loading').classList.remove('active');
+      document.getElementById('screen-error').classList.remove('active');
+      document.getElementById('screen-bill').classList.remove('active');
+      document.getElementById('screen-' + screenName).classList.add('active');
+    }
+
+    function renderData(data) {
+      currentData = data; 
+      var statusStr = data.status ? String(data.status).trim().toLowerCase() : '';
+      var isPaid = (statusStr === 'đã thanh toán' || statusStr === 'thành công');
+
+      let rawAmount = String(data.amount).replace(/[^0-9]/g, '');
+      let displayAmount = rawAmount.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " VNĐ";
+
+      // ĐIỀN BILL CHƯA THANH TOÁN
+      document.getElementById('app-title-bill').innerText = "MÃ GD: " + data.id;
+      document.getElementById('cp-amount').innerText = displayAmount;
+      document.getElementById('cp-content').innerText = data.content;
+      
+      document.getElementById('qr-img').src = 'https://img.vietqr.io/image/' + BANK_ID + '-' + ACCOUNT_NO + '-qr_only.png?amount=' + rawAmount + '&addInfo=' + encodeURIComponent(data.content || '') + '&accountName=' + encodeURIComponent(ACCOUNT_NAME);
+      
+      // ĐIỀN THÔNG TIN ĐÃ THANH TOÁN
+      document.getElementById('bl-paid-id').innerText = data.id;
+      document.getElementById('bl-paid-time').innerText = data.paymentTime || '--:--';
+      document.getElementById('bl-paid-amount').innerText = displayAmount;
+
+      if (isPaid) {
+        document.getElementById('bill-unpaid').style.display = 'none';
+        document.getElementById('bill-paid').style.display = 'flex';
+        if (pollingInterval) clearInterval(pollingInterval);
+      } else {
+        document.getElementById('bill-unpaid').style.display = 'flex';
+        document.getElementById('bill-paid').style.display = 'none';
+        startPolling(); 
+      }
+    }
+
+    function startPolling() {
+      if(pollingInterval) clearInterval(pollingInterval);
+      pollingInterval = setInterval(function() {
+        fetch(GOOGLE_API_URL + "?action=checkStatus&id=" + currentId)
+          .then(res => res.json())
+          .then(result => {
+            if (result.success && (String(result.data.status).toLowerCase() === 'đã thanh toán' || String(result.data.status).toLowerCase() === 'thành công')) {
+              renderData(result.data);
+              showToast("Thanh toán thành công!");
+            }
+          })
+          .catch(e => console.log("Lỗi ngầm"));
+      }, 2000); 
+    }
+
+    /* TÍNH NĂNG LƯU MÃ QR BẰNG CANVAS */
+    function downloadQR() {
+      showToast("Đang tạo ảnh...");
+      const qrUrl = document.getElementById('qr-img').src;
+      const amount = document.getElementById('cp-amount').innerText;
+      const content = document.getElementById('cp-content').innerText;
+
+      const img = new Image();
+      img.crossOrigin = "Anonymous"; 
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = 440;
+        canvas.height = 620;
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 70, 40, 300, 300);
+        ctx.textAlign = 'center';
+        
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 24px Arial, sans-serif';
+        ctx.fillText('THÔNG TIN THANH TOÁN', canvas.width / 2, 380);
+        
+        ctx.fillStyle = '#64748b';
+        ctx.font = '18px Arial, sans-serif';
+        ctx.fillText('Mã GD: ' + currentId, canvas.width / 2, 420);
+        
+        ctx.fillStyle = '#0284c7';
+        ctx.font = 'bold 28px Arial, sans-serif';
+        ctx.fillText(amount, canvas.width / 2, 470);
+        
+        ctx.fillStyle = '#0f172a';
+        ctx.font = '18px Arial, sans-serif';
+        ctx.fillText('Nội dung: ' + content, canvas.width / 2, 520);
+        
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = 'italic 14px Arial, sans-serif';
+        ctx.fillText('Sử dụng App Ngân hàng quét mã để thanh toán', canvas.width / 2, 580);
+        
+        const link = document.createElement('a');
+        link.download = 'QR_ThanhToan_' + currentId + '.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      };
+      
+      img.onerror = function() { showToast("Lỗi tải ảnh QR, vui lòng thử lại!"); }
+      img.src = qrUrl;
+    }
+
+    function copyText(id) { 
+      var textToCopy = document.getElementById(id).innerText.replace(/ VNĐ/g, '').replace(/ đ/g, '').replace(/\./g, '');
+      var textArea = document.createElement("textarea");
+      textArea.value = textToCopy;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("Copy");
+      textArea.remove();
+      showToast("Đã copy!"); 
+    }
+    
+    function showToast(msg) {
+      var t = document.getElementById('toast');
+      t.innerText = msg;
+      t.classList.add('show');
+      setTimeout(function() { t.classList.remove('show'); }, 2000);
+    }
+  </script>
+</body>
+</html>
