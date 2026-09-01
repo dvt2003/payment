@@ -26,7 +26,6 @@
 
     body { font-family: 'Plus Jakarta Sans', sans-serif; display: flex; justify-content: center; color: var(--text-main); position: relative; }
     
-    /* Vòng tròn trang trí nền (Gradient Blur) */
     body::before, body::after { content: ''; position: absolute; border-radius: 50%; filter: blur(80px); z-index: 0; opacity: 0.6; pointer-events: none; }
     body::before { width: 350px; height: 350px; background: rgba(56, 189, 248, 0.3); top: -100px; left: -100px; }
     body::after { width: 300px; height: 300px; background: rgba(139, 92, 246, 0.2); bottom: -50px; right: -50px; }
@@ -41,10 +40,8 @@
     .header-logo { width: 48px; height: 48px; background: linear-gradient(135deg, #0ea5e9, #0284c7); border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; color: white; margin-bottom: 12px; box-shadow: 0 8px 20px rgba(2, 132, 199, 0.3); }
     .header-title { font-size: 18px; font-weight: 800; color: var(--text-main); margin: 0; letter-spacing: -0.5px; }
     
-    /* Thẻ chính phong cách Fintech */
     .card { background: var(--card-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--card-border); border-radius: 28px; padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow-soft); position: relative; overflow: hidden; }
     
-    /* Hiệu ứng nhịp đập chờ thanh toán */
     .card.waiting::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, #0ea5e9, #8b5cf6, #0ea5e9); background-size: 200% 100%; animation: pulseLine 2s linear infinite; }
     @keyframes pulseLine { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
 
@@ -55,7 +52,6 @@
     .btn-save-qr { background: #f1f5f9; color: var(--accent-blue); border: 1px solid #e2e8f0; border-radius: 20px; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; box-shadow: var(--shadow-inner); }
     .btn-save-qr:active { transform: scale(0.95); background: #e2e8f0; }
 
-    /* Thông tin chuyển khoản dạng List tối giản */
     .info-list { background: rgba(255, 255, 255, 0.5); border-radius: 20px; padding: 4px; border: 1px solid rgba(255, 255, 255, 0.8); }
     .info-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid rgba(0,0,0,0.03); }
     .info-item:last-child { border-bottom: none; }
@@ -68,13 +64,11 @@
     .btn-copy { background: #ffffff; color: var(--text-main); border: 1px solid #e2e8f0; border-radius: 10px; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
     .btn-copy:active { transform: scale(0.9); background: #f8fafc; color: var(--accent-blue); border-color: var(--accent-blue); }
 
-    /* Note Box hiện đại */
     .note-box { background: rgba(139, 92, 246, 0.05); border-radius: 20px; padding: 16px; border: 1px solid rgba(139, 92, 246, 0.1); display: flex; gap: 12px; align-items: flex-start; }
     .note-icon { color: var(--accent-purple); flex-shrink: 0; background: rgba(139, 92, 246, 0.1); padding: 8px; border-radius: 12px; }
     .note-text { font-size: 12px; color: var(--text-muted); line-height: 1.6; margin: 0; }
     .note-text strong { color: var(--accent-purple); }
 
-    /* Màn hình thành công */
     .success-container { text-align: center; padding-top: 20px; }
     .success-icon-wrap { width: 80px; height: 80px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; position: relative; }
     .success-icon-wrap::after { content: ''; position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px solid var(--accent-green); animation: pulseRing 2s infinite cubic-bezier(0.215, 0.61, 0.355, 1); }
@@ -86,7 +80,6 @@
     .receipt-label { color: var(--text-muted); font-size: 13px; font-weight: 500; }
     .receipt-value { color: var(--text-main); font-size: 14px; font-weight: 700; }
 
-    /* Toasts & Spinners */
     .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(8px); color: #fff; padding: 12px 24px; border-radius: 100px; font-size: 13px; font-weight: 600; opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 100; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
     .toast.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
 
@@ -102,7 +95,7 @@
     <!-- MÀN HÌNH TẢI -->
     <div id="screen-loading" class="screen active" style="justify-content: center; align-items: center; height: 100%;">
       <div class="spinner"></div>
-      <p style="color: var(--text-muted); font-size: 14px; font-weight: 600;">Đang bảo mật kết nối...</p>
+      <p style="color: var(--text-muted); font-size: 14px; font-weight: 600;">Đang tải dữ liệu...</p>
     </div>
 
     <!-- MÀN HÌNH LỖI -->
@@ -195,7 +188,7 @@
             
             <div style="text-align: left;">
               <div class="receipt-row">
-                <span class="receipt-label">Mã giao dịch</span>
+                <span class="receipt-label">Mã GD</span>
                 <span class="receipt-value" id="bl-paid-id" style="font-family: monospace;">---</span>
               </div>
               <div class="receipt-row">
@@ -215,12 +208,12 @@
   </div>
 
   <script>
-    // HAI ĐƯỜNG LINK API LUÂN PHIÊN NHAU ĐỂ TRÁNH QUÁ TẢI (LOAD BALANCING)
+    // HAI ĐƯỜNG LINK API LUÂN PHIÊN (LOAD BALANCING)
     const API_URLS = [
       "https://script.google.com/macros/s/AKfycbzAlGEH3r3yHIGW2HYcYZX2wxf5rTYqtrLhqOe6as9RHifV_BpscnB7PvWtDyxc5cl4ZQ/exec",
       "https://script.google.com/macros/s/AKfycbzOxkqvXRnuzC-Ek8AUlutoAm7jsSgAYG-lGi8g0kxoV4UZ7FSIf7lCePQw3334ltubqw/exec"
     ];
-    let apiIndex = 0; // Biến theo dõi đang dùng link số mấy
+    let apiIndex = 0; 
     
     const BANK_ID = 'vietcombank';
     const ACCOUNT_NO = 'TGE60603130946VCB';       
@@ -238,7 +231,6 @@
         switchScreen('error');
         return;
       }
-      // Khởi tạo lần đầu
       fetchData();
     };
 
@@ -249,7 +241,8 @@
       fetch(initialUrl)
         .then(res => res.json())
         .then(result => {
-          if (result.success) {
+          // Fix theo ảnh báo lỗi: Kiểm tra status === "success" thay vì result.success
+          if (result.status === "success") {
             renderData(result.data);
             switchScreen('bill');
           } else {
@@ -271,22 +264,22 @@
     }
 
     function renderData(data) {
-      // Đọc chuẩn biến maGiaoDich, soTien, noiDung, trangThai, hoanTatLuc
-      var statusStr = data.trangThai ? String(data.trangThai).trim().toLowerCase() : '';
+      // Fix đọc API chuẩn tiếng việt có dấu như trong file ảnh
+      var statusStr = data["Trạng thái"] ? String(data["Trạng thái"]).trim().toLowerCase() : '';
       var isPaid = (statusStr === 'đã thanh toán' || statusStr === 'thành công');
 
-      let rawAmount = String(data.soTien).replace(/[^0-9]/g, '');
+      let rawAmount = String(data["Số tiền"]).replace(/[^0-9]/g, '');
       let displayAmount = rawAmount.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " VNĐ";
 
       // ĐIỀN CHƯA THANH TOÁN
       document.getElementById('cp-amount').innerText = displayAmount;
-      document.getElementById('cp-content').innerText = data.noiDung;
+      document.getElementById('cp-content').innerText = data["Nội dung"];
       
-      document.getElementById('qr-img').src = 'https://img.vietqr.io/image/' + BANK_ID + '-' + ACCOUNT_NO + '-qr_only.png?amount=' + rawAmount + '&addInfo=' + encodeURIComponent(data.noiDung || '') + '&accountName=' + encodeURIComponent(ACCOUNT_NAME);
+      document.getElementById('qr-img').src = 'https://img.vietqr.io/image/' + BANK_ID + '-' + ACCOUNT_NO + '-qr_only.png?amount=' + rawAmount + '&addInfo=' + encodeURIComponent(data["Nội dung"] || '') + '&accountName=' + encodeURIComponent(ACCOUNT_NAME);
       
       // ĐIỀN ĐÃ THANH TOÁN
-      document.getElementById('bl-paid-id').innerText = data.maGiaoDich || currentId;
-      document.getElementById('bl-paid-time').innerText = data.hoanTatLuc || '--:--';
+      document.getElementById('bl-paid-id').innerText = data["Mã giao dịch"] || currentId;
+      document.getElementById('bl-paid-time').innerText = data["Thời gian thanh toán"] || '--:--';
       document.getElementById('bl-paid-amount').innerText = displayAmount;
 
       if (isPaid) {
@@ -297,23 +290,22 @@
         document.getElementById('bill-unpaid').style.display = 'flex';
         document.getElementById('bill-paid').style.display = 'none';
         
-        // Kích hoạt quét luân phiên nếu chưa chạy
         if(!pollingInterval) startPolling(); 
       }
     }
 
     function startPolling() {
-      // Quét liên tục mỗi 1.1 giây (1100ms)
+      // Quét liên tục mỗi 1.1 giây
       pollingInterval = setInterval(function() {
         
-        // LUÂN PHIÊN URL (Đổi qua đổi lại giữa 0 và 1)
+        // LUÂN PHIÊN URL (0 và 1)
         const fetchUrl = API_URLS[apiIndex] + "?id=" + encodeURIComponent(currentId);
         apiIndex = (apiIndex + 1) % API_URLS.length; 
 
         fetch(fetchUrl)
           .then(res => res.json())
           .then(result => {
-            if (result.success && result.data && (String(result.data.trangThai).toLowerCase() === 'đã thanh toán' || String(result.data.trangThai).toLowerCase() === 'thành công')) {
+            if (result.status === "success" && result.data && (String(result.data["Trạng thái"]).toLowerCase() === 'đã thanh toán' || String(result.data["Trạng thái"]).toLowerCase() === 'thành công')) {
               renderData(result.data);
               showToast("Giao dịch thành công!");
             }
@@ -322,7 +314,6 @@
       }, 1100); 
     }
 
-    /* TÍNH NĂNG LƯU MÃ QR BẰNG CANVAS */
     function downloadQR() {
       showToast("Đang tạo ảnh...");
       const qrUrl = document.getElementById('qr-img').src;
@@ -338,7 +329,6 @@
         canvas.width = 440;
         canvas.height = 620;
         
-        // Vẽ nền trắng bo góc mượt mà
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
